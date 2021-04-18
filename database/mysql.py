@@ -8,4 +8,8 @@ class MysqlClient:
 
     def query(self, sql, params=None):
         with self.connection.cursor() as cursor:
-            cursor.execute(sql, params=None)
+            cursor.execute(sql, params=params)
+            return cursor.fetchall()
+
+    def __del__(self):
+        self.connection.close()

@@ -3,7 +3,8 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-app.config.update(BasicConfig)  # TODO: Requires dict maybe?
+app.config.from_object(BasicConfig)
+
 
 @app.route('/')
 def hello_world():
