@@ -17,7 +17,7 @@
 					<a href="{{ url_for('item', item_id=item.id) }}"><h3>{{ item.name }}</h3></a>
 					<div>
 						{% for tag in item.tags %}
-							<span class="badge bg-secondary text-light">{{ tag }}</span>
+							<span class="badge bg-secondary text-light">{{ tag.tag }}</span>
 						{% endfor %}
 					</div>
 					<div>

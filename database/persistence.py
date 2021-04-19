@@ -168,8 +168,15 @@ class ApplicationDatabase:
         :param name: The name to search for in the item's name
         :return: tuple: Tuple of dict objects for each matching item
         """
-        items_query = f"SELECT * FROM Items I WHERE I.name LIKE '%{name}%';"
-        return self.client.query_all(items_query)
+        if not name:
+            name = ""
+        items_query = f"SELECT I.* FROM Items I WHERE I.name LIKE '%{name}%'"
+        items_result = self.client.query_all(items_query)
+        for item in items_result:
+            tags_query = f"SELECT * FROM items_tags t WHERE t.item_id = '{item['item_id']}'"
+            tags_result = self.client.query_all(tags_query)
+            item['tags'] = tags_result
+        return items_result
 
     def get_user_by_id(self, user_id) -> dict:
         """

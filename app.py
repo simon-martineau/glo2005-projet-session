@@ -138,9 +138,9 @@ def seller_signup():
 
 @app.route('/items')
 def items():
-    # items = db.get_items(name=request.args.get('name'))
+    req_items = db.get_items(name=request.args.get('search'))
 
-    return render_template('items.html', items=fake_items)
+    return render_template('items.html', items=req_items)
 
 
 @app.route('/items/<item_id>')
