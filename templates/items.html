@@ -6,7 +6,7 @@
 	<div class="flex-between" style="margin-bottom: 16px">
 		<h2>Items available</h2>
 		<form class="d-flex" action="" method="GET">
-			<input class="form-control" type="search" placeholder="Search by name" name="search">
+			<input class="form-control" type="search" placeholder="Search by name" name="search" value="{{ request.args.get('search') }}">
 			<button class="btn btn-outline-primary" type="submit">Search</button>
 		</form>
 	</div>
