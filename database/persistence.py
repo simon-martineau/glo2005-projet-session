@@ -176,3 +176,34 @@ class ApplicationDatabase:
         user_query = f"SELECT Users.user_id FROM Users WHERE Users.email_address='{email}';"
         user_id = self.client.query_one(user_query)['user_id']
         return self.get_user_by_id(user_id)
+
+    def get_comments_by_item_id(self, item_id: str) -> tuple:
+        """
+        Fetches comments for an item by its item_id
+        :param item_id: The item_id of the item
+        :return: tuple: Tuple of dict objects for each comment
+        """
+        comments_query = f"SELECT * FROM Comments C WHERE C.item_id='{item_id}';"
+        return self.client.query_all(comments_query)
+
+    def get_comments_by_buyer_id(self, buyer_id: str) -> tuple:
+        """
+        Fetches comments made by a particular buyer by its buyer_id
+        :param buyer_id: The buyer_id of the buyer
+        :return: tuple: TUple of dict objects for each comment
+        """
+        comments_query = f"SELECT * FROM Comments C WHERE C.buyer_id='{buyer_id}';"
+        return self.client.query_all(comments_query)
+
+    def create_comment(self, buyer_id: str, item_id: str, comment_content: str, rating: int) -> None:
+        """
+        Creates a comment in the database
+        :param buyer_id: The ID of the buyer who is commenting
+        :param item_id: The ID of the item to comment on
+        :param comment_content: THe content of the comment
+        :param rating: The rating given to the item
+        :return: None
+        """
+        comment_id = str(uuid.uuid4())
+        comment_query = f"INSERT INTO Comments C (comment_id, buyer_id, item_id, comment_content, rating) VALUES ('{comment_id}', '{buyer_id}', '{item_id}', '{comment_content}', {rating});"
+        self.client.query_none(comment_query)
