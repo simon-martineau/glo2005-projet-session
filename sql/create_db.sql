@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS Users
 (
-    user_id                   char(36),
-    email_address             varchar(100),
-    pswd                      TEXT,
-    account_created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    picture_url               TEXT,
+    user_id     char(36),
+    email       varchar(100),
+    password    TEXT,
+    created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    picture_url TEXT,
     PRIMARY KEY (user_id)
 );
 CREATE TABLE IF NOT EXISTS Buyers
@@ -32,12 +32,13 @@ CREATE TABLE IF NOT EXISTS Categories
 );
 CREATE TABLE IF NOT EXISTS Items
 (
-    item_id          char(36),
-    item_description TEXT,
-    price            FLOAT(2),
-    quantity         integer,
-    category         varchar(100),
-    seller_id        char(36),
+    item_id     char(36),
+    name        varchar(100),
+    description TEXT,
+    price       FLOAT(2),
+    quantity    integer,
+    category    varchar(100),
+    seller_id   char(36),
     FOREIGN KEY (category) REFERENCES Categories (category_name),
     FOREIGN KEY (seller_id) REFERENCES Sellers (user_id),
     PRIMARY KEY (item_id)
@@ -51,15 +52,28 @@ CREATE TABLE IF NOT EXISTS Items_tags
 );
 CREATE TABLE IF NOT EXISTS Comments
 (
-    comment_id                 char(36),
-    buyer_id                   char(36),
-    item_id                    char(36),
-    comment_content            TEXT,
-    rating                     integer(1),
-    comment_creation_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    comment_id char(36),
+    buyer_id   char(36),
+    item_id    char(36),
+    content    TEXT,
+    rating     integer(1),
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (buyer_id) REFERENCES Buyers (user_id),
     FOREIGN KEY (item_id) REFERENCES Items (item_id),
     PRIMARY KEY (comment_id)
+);
+CREATE TABLE IF NOT EXISTS Transactions
+(
+    transaction_id char(36),
+    buyer_id       char(36),
+    seller_id      char(36),
+    item_id        char(36),
+    price          FLOAT(2),
+    quantity       integer,
+    timestamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (buyer_id) REFERENCES Buyers (user_id),
+    FOREIGN KEY (seller_id) REFERENCES Sellers (user_id),
+    PRIMARY KEY (buyer_id, seller_id, item_id, timestamp)
 );
 
 DROP PROCEDURE IF EXISTS validate_uuid;
@@ -85,7 +99,7 @@ CREATE PROCEDURE validate_email(
     DETERMINISTIC
     NO SQL
 BEGIN
-    IF NOT (SELECT in_email REGEXP '$[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$') THEN
+    IF NOT (SELECT in_email REGEXP '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$') THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'E-mail address provided is not valild e-mail format';
     END IF;
 END//
@@ -122,11 +136,21 @@ END//
 DELIMITER ;
 
 DELIMITER //
+CREATE TRIGGER validate_transaction_id
+    BEFORE INSERT
+    ON Transactions
+    FOR EACH ROW
+BEGIN
+    CALL validate_uuid(NEW.transaction_id);
+END//
+DELIMITER ;
+
+DELIMITER //
 CREATE TRIGGER validate_user_email
     BEFORE INSERT
     ON Users
     FOR EACH ROW
 BEGIN
-    CALL validate_email(New.email_address);
+    CALL validate_email(New.email);
 END//
 DELIMITER ;

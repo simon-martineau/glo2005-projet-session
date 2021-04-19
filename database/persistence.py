@@ -19,7 +19,7 @@ class ApplicationDatabase:
         :param picture_url: The user's picture's URL
         :return: None
         """
-        sql_query = f"INSERT INTO Users (user_id, email_address, pswd, picture_url) VALUES ('{user_id}', '{email_address}', '{password}', '{picture_url}');"
+        sql_query = f"INSERT INTO Users (user_id, email, password, picture_url) VALUES ('{user_id}', '{email_address}', '{password}', '{picture_url}');"
         self.client.query_none(sql_query)
 
     def __delete_user_by_user_id(self, user_id: str) -> None:
@@ -153,7 +153,7 @@ class ApplicationDatabase:
         :param name: The name to search for in the item's name
         :return: tuple: Tuple of dict objects for each matching item
         """
-        items_query = f"SELECT * FROM Items I WHERE I.item_name LIKE '%{name}%';"
+        items_query = f"SELECT * FROM Items I WHERE I.name LIKE '%{name}%';"
         return self.client.query_all(items_query)
 
     def get_user_by_id(self, user_id) -> dict:
@@ -173,6 +173,6 @@ class ApplicationDatabase:
         :param email: The e-mail address of the user to fetch
         :return: dict: The information about the user
         """
-        user_query = f"SELECT Users.user_id FROM Users WHERE Users.email_address='{email}';"
+        user_query = f"SELECT Users.user_id FROM Users WHERE Users.email='{email}';"
         user_id = self.client.query_one(user_query)['user_id']
         return self.get_user_by_id(user_id)
