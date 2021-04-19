@@ -6,7 +6,6 @@ from datetime import date
 
 class ApplicationDatabase:
     def __init__(self):
-
         self.client = MysqlClient(current_app.config['MYSQL_HOST'],
                                   current_app.config['MYSQL_USER'],
                                   current_app.config['MYSQL_PASSWORD'],
@@ -45,7 +44,7 @@ class ApplicationDatabase:
         :return: None
         """
         user_id = str(uuid.uuid4())
-        formatted_date = birth_date.strftime("%Y-%m-%%d")
+        formatted_date = birth_date.strftime("%Y-%m-%d")
         self.__create_user(user_id, email_address, password, picture_url)
         buyer_query = f"INSERT INTO Buyers (user_id, first_name, last_name, username, birth_date) VALUES ('{user_id}', '{first_name}', '{last_name}', '{username}', '{formatted_date}');"
         self.client.query_none(buyer_query)
