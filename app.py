@@ -4,7 +4,7 @@ from database.persistence import ApplicationDatabase
 from sessions import SessionManager
 from auth import UserManager
 from middleware import AuthenticationMiddleware
-from exceptions import UsernameTakenException, EmailTakenException
+from exceptions import UsernameTakenException, EmailTakenException, SellerNameTaken
 
 app = Flask(__name__)
 app.config.from_object(BasicConfig)
@@ -117,10 +117,23 @@ def buyer_signup():
 
 @app.route('/signup/seller', methods=['GET', 'POST'])
 def seller_signup():
-    if request.method == 'GET':
-        return render_template('seller_signup.html')
-    else:
-        pass
+    errors = []
+    if request.method == 'POST':
+        form = request.form
+        email = form['email']
+        name = form['name']
+        description = form['description']
+        password = form['password']
+
+        try:
+            user_manager.create_seller(email, password, name, description)
+            return redirect('/login')
+        except SellerNameTaken as e:
+            errors.append("This seller already exists")
+        except EmailTakenException as e:
+            errors.append("Email is already taken")
+
+    return render_template('seller_signup.html', errors=errors)
 
 
 @app.route('/items')

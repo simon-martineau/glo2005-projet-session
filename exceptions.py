@@ -6,3 +6,7 @@ class UsernameTakenException(Exception):
 
 class EmailTakenException(Exception):
     pass
+
+
+class SellerNameTaken(Exception):
+    pass

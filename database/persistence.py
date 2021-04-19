@@ -21,7 +21,7 @@ class ApplicationDatabase:
         """
         sql_query = f"INSERT INTO Users (user_id, email, password, picture_url) VALUES ('{user_id}', '{email_address}', '{password}', '{picture_url}');"
         self.client.query_none(sql_query)
-        
+
     def is_buyer_username_taken(self, username: str) -> bool:
         query = f"""SELECT COUNT(*) as count FROM buyers b WHERE b.username = '{username}'"""
         result = self.client.query_one(query)
@@ -29,6 +29,11 @@ class ApplicationDatabase:
 
     def is_email_taken(self, email: str) -> bool:
         query = f"""SELECT COUNT(*) as count FROM users u WHERE u.email = '{email}'"""
+        result = self.client.query_one(query)
+        return int(result['count']) != 0
+
+    def is_seller_name_taken(self, name: str) -> bool:
+        query = f"""SELECT COUNT(*) as count FROM sellers s WHERE s.name = '{name}'"""
         result = self.client.query_one(query)
         return int(result['count']) != 0
 
@@ -60,20 +65,20 @@ class ApplicationDatabase:
         buyer_query = f"INSERT INTO Buyers (user_id, first_name, last_name, username, birth_date) VALUES ('{user_id}', '{first_name}', '{last_name}', '{username}', '{formatted_date}');"
         self.client.query_none(buyer_query)
 
-    def create_seller(self, email_address: str, password: str, picture_url: str, seller_name: str,
-                      seller_description: str) -> None:
+    def create_seller(self, email_address: str, password: str, picture_url: str, name: str,
+                      description: str) -> None:
         """
         Creates a new seller in the database
         :param email_address: The seller's e-mail address
         :param password: The seller's password
         :param picture_url: The seller's picture's URL
-        :param seller_name: The seller's name
-        :param seller_description: The seller's description
+        :param name: The seller's name
+        :param description: The seller's description
         :return: None
         """
         user_id = str(uuid.uuid4())
         self.__create_user(user_id, email_address, password, picture_url)
-        seller_query = f"INSERT INTO Sellers (user_id, seller_name, seller_description) VALUES ('{user_id}', '{seller_name}', '{seller_description}');"
+        seller_query = f"INSERT INTO Sellers (user_id, name, description) VALUES ('{user_id}', '{name}', '{description}');"
         self.client.query_none(seller_query)
 
     def get_buyer_by_username(self, username: str) -> dict:
@@ -100,7 +105,7 @@ class ApplicationDatabase:
         :param seller_name: The seller name to fetch
         :return: dict: The seller's information in the database
         """
-        seller_query = f"SELECT U.*, S.seller_name, S.seller_description FROM Users U, Sellers S WHERE U.user_id=S.user_id AND S.seller_name='{seller_name}';"
+        seller_query = f"SELECT U.*, S.name, S.description FROM Users U, Sellers S WHERE U.user_id=S.user_id AND S.name='{seller_name}';"
         return self.client.query_one(seller_query)
 
     def get_seller_by_user_id(self, user_id: str) -> dict:
@@ -109,7 +114,7 @@ class ApplicationDatabase:
         :param user_id: The user_id of the seller
         :return: dict: The seller's information in the database
         """
-        seller_query = f"SELECT U.*, S.seller_name, S.seller_description FROM Users U, Sellers S WHERE U.user_id=S.user_id AND S.user_id='{user_id}';"
+        seller_query = f"SELECT U.*, S.name, S.description FROM Users U, Sellers S WHERE U.user_id=S.user_id AND S.user_id='{user_id}';"
         return self.client.query_one(seller_query)
 
     def delete_buyer_by_user_id(self, user_id: str) -> None:
@@ -172,9 +177,13 @@ class ApplicationDatabase:
         :param user_id: The user_id of the user to fetch
         :return: dict: The information about the user
         """
+        user_type = 'buyer'
         user = self.get_buyer_by_user_id(user_id)
         if not user:
+            user_type = 'seller'
             user = self.get_seller_by_user_id(user_id)
+        if user:
+            user['type'] = user_type
         return user
 
     def get_user_by_email(self, email: str) -> dict:

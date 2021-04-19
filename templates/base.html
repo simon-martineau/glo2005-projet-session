@@ -29,7 +29,8 @@
 				<a class="nav-link nav-item" href="{{ url_for('signup') }}">Sign up</a>
 			{% else %}
 				{% set user = request.environ['user'] %}
-				<span class="nav-item">Logged in as {{ user.email }}</span>
+				<span class="nav-item" style="margin-right: 20px">Logged in as <u
+								class="text-decoration-underline">{{ user.email }}</u> ({{ user.type }})</span>
 				<a class="nav-link nav-item" href="{{ url_for('account') }}">Account</a>
 				<a class="nav-link nav-item" href="{{ url_for('logout') }}">Log out</a>
 			{% endif %}

@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS Buyers
 );
 CREATE TABLE IF NOT EXISTS Sellers
 (
-    user_id            char(36),
-    seller_name        varchar(100),
-    seller_description TEXT,
+    user_id     char(36),
+    name        varchar(100),
+    description TEXT,
     FOREIGN KEY (user_id) REFERENCES Users (user_id),
     PRIMARY KEY (user_id)
 );

@@ -3,7 +3,7 @@ from passlib.hash import sha256_crypt
 from datetime import date
 
 from database.persistence import ApplicationDatabase
-from exceptions import EmailTakenException, UsernameTakenException
+from exceptions import EmailTakenException, UsernameTakenException, SellerNameTaken
 
 
 class UserManager:
@@ -17,8 +17,14 @@ class UserManager:
         return sha256_crypt.verify(password, hashed)
 
     def create_seller(self, email, password, name, description):
+        if self.db.is_email_taken(email):
+            raise EmailTakenException()
+
+        if self.db.is_seller_name_taken(name):
+            raise SellerNameTaken()
+
         hashed = self._hash_password(password)
-        return self.db.create_seller(email, hashed, name, description)
+        return self.db.create_seller(email, hashed, None, name, description)
 
     def create_buyer(self, email, password, first_name, last_name, username, birth_date):
         if self.db.is_email_taken(email):
