@@ -60,8 +60,8 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        # user_id = user_manager.verify_user_credentials(email, password)
-        user_id = '3209485u34jhf9qh3498'  # TODO
+
+        user_id = user_manager.verify_user_credentials(email, password)
 
         if user_id:
             session_id = session_manager.create_session(user_id)

@@ -13,11 +13,7 @@ class AuthenticationMiddleware:
         session_id = request.cookies.get('sessionID')
         if session_id:
             user_id = self.session_manager.get_user_id(session_id)
-            # user = self.db.get_user_by_id(user_id)
-            user = {
-                'id': 'a09yf90a87dsf',
-                'email': 'asdf@gmail.com'
-            }  # TODO
+            user = self.db.get_user_by_id(user_id)
             environ['user'] = user
 
         return self.app(environ, start_response)
