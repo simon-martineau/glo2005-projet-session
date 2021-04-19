@@ -6,13 +6,10 @@ from datetime import date
 
 class ApplicationDatabase:
     def __init__(self):
-        """
         self.client = MysqlClient(current_app.config['MYSQL_HOST'],
                                   current_app.config['MYSQL_USER'],
                                   current_app.config['MYSQL_PASSWORD'],
                                   current_app.config['MYSQL_DATABASE'])
-        """
-        self.client = MysqlClient("localhost", "root", "", "projet")
 
     def __create_user(self, user_id: str, email_address: str, password: str, picture_url: str) -> None:
         """
