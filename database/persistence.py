@@ -6,13 +6,10 @@ from datetime import date
 
 class ApplicationDatabase:
     def __init__(self):
-        """
         self.client = MysqlClient(current_app.config['MYSQL_HOST'],
                                   current_app.config['MYSQL_USER'],
                                   current_app.config['MYSQL_PASSWORD'],
                                   current_app.config['MYSQL_DATABASE'])
-        """
-        self.client = MysqlClient("localhost", "root", "", "projet")
 
     def __create_user(self, user_id: str, email_address: str, password: str, picture_url: str) -> None:
         """
@@ -34,7 +31,8 @@ class ApplicationDatabase:
         user_query = f"DELETE FROM Users U WHERE U.user_id='{user_id}';"
         self.client.query_none(user_query)
 
-    def create_buyer(self, email_address: str, password: str, picture_url: str, first_name: str, last_name: str, username: str, birth_date: date) -> None:
+    def create_buyer(self, email_address: str, password: str, picture_url: str, first_name: str, last_name: str,
+                     username: str, birth_date: date) -> None:
         """
         Creates a new buyer in the database
         :param email_address: The buyer's e-mail address
@@ -52,7 +50,8 @@ class ApplicationDatabase:
         buyer_query = f"INSERT INTO Buyers (user_id, first_name, last_name, username, birth_date) VALUES ('{user_id}', '{first_name}', '{last_name}', '{username}', '{formatted_date}');"
         self.client.query_none(buyer_query)
 
-    def create_seller(self, email_address: str, password: str, picture_url: str, seller_name: str, seller_description: str) -> None:
+    def create_seller(self, email_address: str, password: str, picture_url: str, seller_name: str,
+                      seller_description: str) -> None:
         """
         Creates a new seller in the database
         :param email_address: The seller's e-mail address
@@ -123,7 +122,8 @@ class ApplicationDatabase:
         self.client.query_none(seller_query)
         self.__delete_user_by_user_id(user_id)
 
-    def create_item(self, item_name: str, item_description: str, price: float, quantity: int, category: str, seller_id: str) -> None:
+    def create_item(self, item_name: str, item_description: str, price: float, quantity: int, category: str,
+                    seller_id: str) -> None:
         """
         Creates an item for sale in the database
         :param item_name: The name of the item
