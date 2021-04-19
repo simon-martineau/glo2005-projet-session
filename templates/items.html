@@ -14,14 +14,14 @@
 		{% for item in items %}
 			<div class="card item-card">
 				<div class="card-body">
-					<a href="{{ url_for('item', item_id=item.id) }}"><h3>{{ item.name }}</h3></a>
+					<a href="{{ url_for('item', item_id=item.item_id) }}"><h3>{{ item.name }}</h3></a>
 					<div>
 						{% for tag in item.tags %}
 							<span class="badge bg-secondary text-light">{{ tag.tag }}</span>
 						{% endfor %}
 					</div>
 					<div>
-						<span class="price-tag">{{ item.price }}</span>
+						<span class="price-tag">{{ item.price }} $</span>
 						<span class="quantity">Available: {{ item.quantity }}</span>
 					</div>
 					<p>{{ item.description }}</p>

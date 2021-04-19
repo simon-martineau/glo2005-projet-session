@@ -159,7 +159,7 @@ class ApplicationDatabase:
         :param item_id: The item_i dof the item to fetch
         :return: dict: The information about the item
         """
-        item_query = f"SELECT * FROM Items I WHERE I.item_id='{item_id}';"
+        item_query = f"SELECT I.*, S.name AS seller_name FROM Sellers S, Items I WHERE I.item_id='{item_id}';"
         return self.client.query_one(item_query)
 
     def get_items(self, name: str = None) -> tuple:
@@ -209,7 +209,7 @@ class ApplicationDatabase:
         :param item_id: The item_id of the item
         :return: tuple: Tuple of dict objects for each comment
         """
-        comments_query = f"SELECT * FROM Comments C WHERE C.item_id='{item_id}';"
+        comments_query = f"SELECT B.username, C.* FROM Buyers B INNER JOIN Comments C ON B.user_id = C.buyer_id WHERE C.item_id='{item_id}' ORDER BY c.created DESC;"
         return self.client.query_all(comments_query)
 
     def get_comments_by_buyer_id(self, buyer_id: str) -> tuple:
@@ -231,5 +231,5 @@ class ApplicationDatabase:
         :return: None
         """
         comment_id = str(uuid.uuid4())
-        comment_query = f"INSERT INTO Comments C (comment_id, buyer_id, item_id, comment_content, rating) VALUES ('{comment_id}', '{buyer_id}', '{item_id}', '{comment_content}', {rating});"
+        comment_query = f"INSERT INTO Comments (comment_id, buyer_id, item_id, content, rating) VALUES ('{comment_id}', '{buyer_id}', '{item_id}', '{comment_content}', {rating});"
         self.client.query_none(comment_query)

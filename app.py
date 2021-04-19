@@ -66,7 +66,10 @@ def login():
 
         if user_id:
             session_id = session_manager.create_session(user_id)
-            res = make_response(redirect('/'))
+            redirect_url = request.args.get('next')
+            if not redirect_url:
+                redirect_url = '/'
+            res = make_response(redirect(redirect_url))
             res.set_cookie('sessionID', session_id)
             return res
         else:
@@ -143,10 +146,17 @@ def items():
     return render_template('items.html', items=req_items)
 
 
-@app.route('/items/<item_id>')
+@app.route('/items/<item_id>', methods=['GET', 'POST'])
 def item(item_id):
-    requested_item = next(x for x in fake_items if x['id'] == item_id)
-    comments = requested_item["comments"]
+    if request.method == 'POST':
+        comment = request.form['comment']
+        if comment:
+            user = request.environ['user']
+            if user['type'] == 'buyer':
+                db.create_comment(user['user_id'], item_id, comment, 0)
+
+    requested_item = db.get_item_by_id(item_id)
+    comments = db.get_comments_by_item_id(item_id)
     return render_template('item.html', item=requested_item, comments=comments)
 
 
