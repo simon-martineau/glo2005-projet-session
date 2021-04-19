@@ -7,36 +7,51 @@
 			<form method="post">
 				<div class="mb-2">
 					<label for="email" class="form-label">Email address</label>
-					<input type="email" class="form-control" id="email" name="email">
+					<input type="email" class="form-control" id="email" name="email" value="{{ request.form['email'] }}" required>
 				</div>
 				<div class="mb-2">
 					<label for="username" class="form-label">Username</label>
-					<input type="text" class="form-control" id="username" name="username">
+					<input type="text" class="form-control" id="username" name="username" value="{{ request.form['username'] }}" required>
 				</div>
 				<div class="mb-2">
 					<label for="first_name" class="form-label">First name</label>
-					<input type="text" class="form-control" id="first_name" name="first_name">
+					<input type="text" class="form-control" id="first_name" name="first_name" value="{{ request.form['first_name'] }}" required>
 				</div>
 				<div class="mb-2">
 					<label for="last_name" class="form-label">Last name</label>
-					<input type="text" class="form-control" id="last_name" name="last_name">
+					<input type="text" class="form-control" id="last_name" name="last_name" value="{{ request.form['last_name'] }}" required>
 				</div>
 				<div class="mb-2">
 					<label for="birth_date" class="form-label">Birth date</label>
-					<input type="date" class="form-control" id="birth_date" name="birth_date">
+					<input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ request.form['birth_date'] }}" required>
 				</div>
 				<div class="mb-2">
 					<label for="password" class="form-label">Password</label>
-					<input type="password" class="form-control" id="password" name="password">
+					<input type="password" class="form-control" id="password" name="password" required>
 				</div>
 				<div class="mb-3">
 					<label for="password_confirm" class="form-label">Password (again)</label>
-					<input type="password" class="form-control" id="password_confirm">
+					<input type="password" class="form-control" id="password_confirm" required>
 				</div>
+				<script type="text/javascript">
+            var password = document.getElementById("password")
+                , confirm_password = document.getElementById("password_confirm");
+
+            function validatePassword() {
+                if (password.value != confirm_password.value) {
+                    confirm_password.setCustomValidity("Passwords Don't Match");
+                } else {
+                    confirm_password.setCustomValidity('');
+                }
+            }
+
+            password.onchange = validatePassword;
+            confirm_password.onkeyup = validatePassword;
+				</script>
 				{% if errors %}
 					<ul>
 						{% for error in errors %}
-							<li>{{ error }}</li>
+							<li class="text-danger">{{ error }}</li>
 						{% endfor %}
 					</ul>
 				{% endif %}

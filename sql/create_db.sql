@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS Users
 (
     user_id     char(36),
-    email       varchar(100),
+    email       varchar(100) UNIQUE,
     password    TEXT,
     created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     picture_url TEXT,

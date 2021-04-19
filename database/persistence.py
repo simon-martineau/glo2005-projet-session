@@ -21,6 +21,16 @@ class ApplicationDatabase:
         """
         sql_query = f"INSERT INTO Users (user_id, email, password, picture_url) VALUES ('{user_id}', '{email_address}', '{password}', '{picture_url}');"
         self.client.query_none(sql_query)
+        
+    def is_buyer_username_taken(self, username: str) -> bool:
+        query = f"""SELECT COUNT(*) as count FROM buyers b WHERE b.username = '{username}'"""
+        result = self.client.query_one(query)
+        return int(result['count']) != 0
+
+    def is_email_taken(self, email: str) -> bool:
+        query = f"""SELECT COUNT(*) as count FROM users u WHERE u.email = '{email}'"""
+        result = self.client.query_one(query)
+        return int(result['count']) != 0
 
     def __delete_user_by_user_id(self, user_id: str) -> None:
         """
