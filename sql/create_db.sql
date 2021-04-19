@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Comments
     item_id    char(36),
     content    TEXT,
     rating     integer(1),
-    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (buyer_id) REFERENCES Buyers (user_id),
     FOREIGN KEY (item_id) REFERENCES Items (item_id),
     PRIMARY KEY (comment_id)
@@ -152,5 +152,17 @@ CREATE TRIGGER validate_user_email
     FOR EACH ROW
 BEGIN
     CALL validate_email(New.email);
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER adjust_item_quantity
+    AFTER INSERT
+    ON Transactions
+    FOR EACH ROW
+BEGIN
+    UPDATE Items
+    SET Items.quantity = Items.quantity - New.quantity
+    WHERE Items.item_id = New.item_id;
 END//
 DELIMITER ;
