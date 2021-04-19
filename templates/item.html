@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block body %}
+	<div style="height: 80px"></div>
+	<div class="card big-item-card">
+		<div class="card-body">
+			<h3>{{ item.name }}</h3>
+			<div>Sold by: {{ item.seller_name }}</div>
+			<div>
+				{% for tag in item.tags %}
+					<span class="badge bg-secondary text-light">{{ tag }}</span>
+				{% endfor %}
+			</div>
+			<div>
+				<span class="price-tag">{{ item.price }}</span>
+				<span class="quantity">Available: {{ item.quantity }}</span>
+			</div>
+			<p>{{ item.description }}</p>
+		</div>
+		<a class="btn btn-primary" href="{{ url_for('buy_item', item_id=item.id) }}">Buy this item</a>
+	</div>
+	<div style="height: 40px"></div>
+
+
+
+	<h3 class="card-title">
+		Comments
+	</h3>
+	{% if not comments %}
+		<p>There are no comments for this item</p>
+	{% else %}
+		{% for comment in comments %}
+			<div class="comment-box">
+				<h4>{{ comment.username }}</h4>
+				<p>{{ comment.content }}</p>
+				<span class="comment-timestamp">{{ comment.timestamp }}</span>
+			</div>
+		{% endfor %}
+	{% endif %}
+
+
+{% endblock %}

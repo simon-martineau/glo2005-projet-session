@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block outer_body %}
+	<div class="form-box-wrapper">
+		<div class="form-box text-center">
+			<h4 class=" text-center"> You can either</h4>
+			<a href="{{ url_for('buyer_signup') }}">Create a buyer account</a> <br/>OR <br/>
+			<a href="{{ url_for('seller_signup') }}">Create a seller account</a>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block outer_body %}
+
+	<div class="form-box-wrapper">
+		<div class="form-box">
+			<h2 class="text-center">Create a seller account</h2>
+			<form method="post">
+				<div class="mb-2">
+					<label for="email" class="form-label">Email address</label>
+					<input type="email" class="form-control" id="email">
+				</div>
+				<div class="mb-2">
+					<label for="name" class="form-label">Seller name (e.g. company name)</label>
+					<input type="text" class="form-control" id="name">
+				</div>
+				<div class="mb-2">
+					<label for="description" class="form-label">Seller description</label>
+					<textarea class="form-control" id="name"></textarea>
+				</div>
+				<div class="mb-2">
+					<label for="password" class="form-label">Password</label>
+					<input type="password" class="form-control" id="password">
+				</div>
+				<div class="mb-3">
+					<label for="password_confirm" class="form-label">Password (again)</label>
+					<input type="password" class="form-control" id="password_confirm">
+				</div>
+				{% if errors %}
+					<ul>
+						{% for error in errors %}
+							<li>{{ error }}</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+{% endblock %}

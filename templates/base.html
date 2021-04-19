@@ -3,18 +3,48 @@
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 	      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css"/>
 </head>
 <body>
 {% block navigation %}
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="{{ url_for('home') }}">Amaz</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+			        aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarText">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href="{{ url_for('home') }}">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('items') }}">Shop</a>
+					</li>
+				</ul>
+			</div>
+			{% if not request.environ['user'] %}
+				<a class="nav-link nav-item" href="{{ url_for('login') }}">Log in</a>
+				<a class="nav-link nav-item" href="{{ url_for('signup') }}">Sign up</a>
+			{% else %}
+				{% set user = request.environ['user'] %}
+				<span class="nav-item">Logged in as {{ user.email }}</span>
+				<a class="nav-link nav-item" href="{{ url_for('account') }}">Account</a>
+				<a class="nav-link nav-item" href="{{ url_for('logout') }}">Log out</a>
+			{% endif %}
+		</div>
 
+	</nav>
 {% endblock %}
 
 
-<div class="container">
-	{% block body %}
-	{% endblock %}
-</div>
-
+{% block outer_body %}
+	<div class="container">
+		{% block body %}
+		{% endblock %}
+	</div>
+{% endblock outer_body %}
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
