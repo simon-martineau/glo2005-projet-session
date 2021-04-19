@@ -11,12 +11,12 @@ class MysqlClient:
             cursor.execute(sql, params)
             return cursor.fetchone()
 
-    def query_many(self, sql, size, params=None) -> dict:
+    def query_many(self, sql, size, params=None) -> tuple:
         with self.connection.cursor() as cursor:
             cursor.execute(sql, params)
             return cursor.fetchmany(size)
 
-    def query_all(self, sql, params=None) -> dict:
+    def query_all(self, sql, params=None) -> tuple:
         with self.connection.cursor() as cursor:
             cursor.execute(sql, params)
             return cursor.fetchall()

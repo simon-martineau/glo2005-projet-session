@@ -32,7 +32,7 @@ class ApplicationDatabase:
         :return: None
         """
         user_query = f"DELETE FROM Users U WHERE U.user_id='{user_id}';"
-        self.client.query_none(user_query);
+        self.client.query_none(user_query)
 
     def create_buyer(self, email_address: str, password: str, picture_url: str, first_name: str, last_name: str, username: str, birth_date: date) -> None:
         """
@@ -97,7 +97,7 @@ class ApplicationDatabase:
     def get_seller_by_user_id(self, user_id: str) -> dict:
         """
         Fetches a seller in the database by its user_id
-        :param id: The user_id of the seller
+        :param user_id: The user_id of the seller
         :return: dict: The seller's information in the database
         """
         seller_query = f"SELECT U.*, S.seller_name, S.seller_description FROM Users U, Sellers S WHERE U.user_id=S.user_id AND S.user_id='{user_id}';"
@@ -122,3 +122,57 @@ class ApplicationDatabase:
         seller_query = f"DELETE FROM Sellers S WHERE S.user_id='{user_id}';"
         self.client.query_none(seller_query)
         self.__delete_user_by_user_id(user_id)
+
+    def create_item(self, item_name: str, item_description: str, price: float, quantity: int, category: str, seller_id: str) -> None:
+        """
+        Creates an item for sale in the database
+        :param item_name: The name of the item
+        :param item_description: The description of the item
+        :param price: The price of the item
+        :param quantity: The quantity of the item available
+        :param category: The category of the item
+        :param seller_id: The user_id of the seller
+        :return: None
+        """
+        item_id = str(uuid.uuid4())
+        item_query = f"INSERT INTO Items VALUES ('{item_id}', '{item_name}', '{item_description}', {price}, {quantity}, '{category}', '{seller_id}');"
+        self.client.query_none(item_query)
+
+    def get_item_by_id(self, item_id: str) -> dict:
+        """
+        Fetches an item by its item_id
+        :param item_id: The item_i dof the item to fetch
+        :return: dict: The information about the item
+        """
+        item_query = f"SELECT * FROM Items I WHERE I.item_id='{item_id}';"
+        return self.client.query_one(item_query)
+
+    def get_items(self, name: str = None) -> tuple:
+        """
+        Fetches all items whose name contains attribute name
+        :param name: The name to search for in the item's name
+        :return: tuple: Tuple of dict objects for each matching item
+        """
+        items_query = f"SELECT * FROM Items I WHERE I.item_name LIKE '%{name}%';"
+        return self.client.query_all(items_query)
+
+    def get_user_by_id(self, user_id) -> dict:
+        """
+        Fetched a user by its user_id
+        :param user_id: The user_id of the user to fetch
+        :return: dict: The information about the user
+        """
+        user = self.get_buyer_by_user_id(user_id)
+        if not user:
+            user = self.get_seller_by_user_id(user_id)
+        return user
+
+    def get_user_by_email(self, email: str) -> dict:
+        """
+        Fetches a user by its e-mail address
+        :param email: The e-mail address of the user to fetch
+        :return: dict: The information about the user
+        """
+        user_query = f"SELECT Users.user_id FROM Users WHERE Users.email_address='{email}';"
+        user_id = self.client.query_one(user_query)['user_id']
+        return self.get_user_by_id(user_id)
