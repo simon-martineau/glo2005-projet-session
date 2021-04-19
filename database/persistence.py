@@ -6,10 +6,13 @@ from datetime import date
 
 class ApplicationDatabase:
     def __init__(self):
+        """
         self.client = MysqlClient(current_app.config['MYSQL_HOST'],
                                   current_app.config['MYSQL_USER'],
                                   current_app.config['MYSQL_PASSWORD'],
                                   current_app.config['MYSQL_DATABASE'])
+        """
+        self.client = MysqlClient("localhost", "root", "", "projet")
 
     def __create_user(self, user_id: str, email_address: str, password: str, picture_url: str) -> None:
         """
@@ -61,7 +64,7 @@ class ApplicationDatabase:
         """
         user_id = str(uuid.uuid4())
         self.__create_user(user_id, email_address, password, picture_url)
-        seller_query = f"INSERT INTO Sellers (seller_name, seller_description) VALUES ('{seller_name}', '{seller_description}');"
+        seller_query = f"INSERT INTO Sellers (user_id, seller_name, seller_description) VALUES ('{user_id}', '{seller_name}', '{seller_description}');"
         self.client.query_none(seller_query)
 
     def get_buyer_by_username(self, username: str) -> dict:
