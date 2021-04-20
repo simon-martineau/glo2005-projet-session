@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS Transactions
     timestamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (buyer_id) REFERENCES Buyers (user_id),
     FOREIGN KEY (seller_id) REFERENCES Sellers (user_id),
-    PRIMARY KEY (buyer_id, seller_id, item_id, timestamp)
+    PRIMARY KEY (transaction_id)
 );
 
 DROP PROCEDURE IF EXISTS validate_uuid;
