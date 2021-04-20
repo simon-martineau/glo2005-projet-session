@@ -43,23 +43,22 @@ def populate() -> None:
 
     # Sellers
     nb_of_sellers = 100
-    sellers_user_ids = users_ids[101:]
+    sellers_user_ids = users_ids[100:]
     sellers_first_names = [names.get_first_name() for _ in range(10)]
     sellers_last_names = ["store", "boutique", "market", "company", "items", "variety", "selection", "shop", "treasures", "picks"]
-    sellers_names = ["'s ".join(x) for x in list(itertools.product(sellers_first_names, sellers_last_names))]
+    sellers_names = ["s ".join(x) for x in list(itertools.product(sellers_first_names, sellers_last_names))]
     sellers_descriptions = [f"Find everything at {x}!" for x in sellers_names]
 
     # Items
-    colors = ["Red", "Orange", "Yellow", "Lime green", "Green", "Teal", "Blue", "Purple", "Pink", "White", "Black"]
+    colors = ["Red", "Orange", "Yellow", "Lime green", "Green", "Teal", "Blue", "Purple", "Pink", "White"]
     products = ["chair", "dining table", "couch", "pillow", "coffee table", "bookshelf", "ottoman", "desk", "rug", "bedsheet set"]
-    nb_of_items = len(colors)*len(products)
+    nb_of_items = 100
     item_ids = [str(uuid.uuid4()) for _ in range(nb_of_items)]
     items_names = [" ".join(x) for x in list(itertools.product(colors, products))]
     items_descriptions = [" ".join(["A beautiful", x, "that fits all your needs!"]) for x in items_names]
     items_prices = [round(random.uniform(15.0, 65.0), 2) for _ in range(nb_of_items)]
     items_quantity = [random.randint(5, 20) for _ in range(nb_of_items)]
-    items_categories = ["Furniture" for _ in range (nb_of_items)]
-    items_seller_ids = sellers_user_ids
+    items_categories_ids = [1 for _ in range (nb_of_items)]
 
     # Comments
     nb_of_comments = 100
@@ -96,7 +95,7 @@ def populate() -> None:
 
     # Populating Items
     for i in range(nb_of_items):
-        items_query = f"INSERT INTO Items (item_id, name, description, price, quantity, category_id, seller_id) VALUES ('{item_ids[i]}', '{items_names[i]}', '{items_descriptions[i]}', {items_prices[i]}, {items_quantity[i]}, '{sellers_user_ids[i]}');"
+        items_query = f"INSERT INTO Items (item_id, name, description, price, quantity, category_id, seller_id) VALUES ('{item_ids[i]}', '{items_names[i]}', '{items_descriptions[i]}', {items_prices[i]}, {items_quantity[i]}, '{items_categories_ids[i]}', '{sellers_user_ids[i]}');"
         client.query_none(items_query)
 
     # Populating Comments
@@ -107,3 +106,6 @@ def populate() -> None:
     # Populating Transactions
     for i in range(nb_of_transaction):
         transactions_query = f"INSERT INTO Transactions (transaction_id, buyer_id, seller_id, item_id, price, quantity) VALUES ('{transaction_ids[i]}', '{buyers_user_ids[i]}', '{sellers_user_ids[i]}', '{item_ids[i]}', {items_prices[i]}, {transactions_quantities[i]});"
+        client.query_none(transactions_query)
+
+populate()
