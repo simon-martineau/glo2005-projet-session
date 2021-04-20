@@ -161,6 +161,18 @@ END//
 DELIMITER ;
 
 DELIMITER //
+CREATE TRIGGER verify_buyer_age
+    BEFORE INSERT
+    ON buyers
+    FOR EACH ROW
+BEGIN
+    IF (DATEDIFF(CURRENT_DATE(), NEW.birth_date) / 365 < 18) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A buyer must be 18 or older';
+    end if;
+END//
+DELIMITER ;
+
+DELIMITER //
 CREATE TRIGGER adjust_item_quantity
     AFTER INSERT
     ON Transactions

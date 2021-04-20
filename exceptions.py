@@ -18,3 +18,7 @@ class NotFoundException(Exception):
 
 class InvalidQuantity(Exception):
     pass
+
+
+class InvalidAge(Exception):
+    pass

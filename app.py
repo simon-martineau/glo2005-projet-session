@@ -4,7 +4,7 @@ from database.persistence import ApplicationDatabase
 from sessions import SessionManager
 from auth import UserManager
 from middleware import AuthenticationMiddleware
-from exceptions import UsernameTakenException, EmailTakenException, SellerNameTaken, InvalidQuantity
+from exceptions import UsernameTakenException, EmailTakenException, SellerNameTaken, InvalidQuantity, InvalidAge
 
 app = Flask(__name__)
 app.config.from_object(BasicConfig)
@@ -80,6 +80,8 @@ def buyer_signup():
             errors.append("Username is already taken")
         except EmailTakenException as e:
             errors.append("Email is already taken")
+        except InvalidAge:
+            errors.append("A buyer must be 18 years or older")
 
     return render_template('buyer_signup.html', errors=errors)
 

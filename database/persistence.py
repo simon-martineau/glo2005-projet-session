@@ -3,7 +3,7 @@ from .mysql import MysqlClient
 from pymysql.err import MySQLError
 import uuid
 from datetime import date
-from exceptions import InvalidQuantity
+from exceptions import InvalidQuantity, InvalidAge
 
 
 class ApplicationDatabase:
@@ -61,9 +61,17 @@ class ApplicationDatabase:
         """
         user_id = str(uuid.uuid4())
         formatted_date = birth_date.strftime("%Y-%m-%d")
-        self.__create_user(user_id, email_address, password)
-        buyer_query = f"INSERT INTO Buyers (user_id, first_name, last_name, username, birth_date) VALUES ('{user_id}', '{first_name}', '{last_name}', '{username}', '{formatted_date}');"
-        self.client.query_none(buyer_query)
+        with self.client.connection.cursor() as cursor:
+            self.client.connection.begin()
+            user_query = f"INSERT INTO Users (user_id, email, password) VALUES ('{user_id}', '{email_address}', '{password}');"
+            cursor.execute(user_query)
+            buyer_query = f"INSERT INTO Buyers (user_id, first_name, last_name, username, birth_date) VALUES ('{user_id}', '{first_name}', '{last_name}', '{username}', '{formatted_date}');"
+            try:
+                cursor.execute(buyer_query)
+            except MySQLError:
+                self.client.connection.rollback()
+                raise InvalidAge
+        self.client.connection.commit()
 
     def create_seller(self, email_address: str, password: str, name: str,
                       description: str) -> None:
