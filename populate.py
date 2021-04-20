@@ -67,7 +67,6 @@ def populate() -> None:
     adjectives = ["good", "bad", "convenient", "useful", "futile", "useless", "lovely", "cool", "nice", "awesome"]
     comment_ids = [str(uuid.uuid4()) for _ in range(nb_of_comments)]
     comments_content = [" ".join(x) for x in list(itertools.product(adverbs, adjectives))]
-    comments_ratings = [random.randint(1, 5) for _ in range(nb_of_comments)]
 
     # Transactions
     nb_of_transaction = 100
@@ -101,7 +100,7 @@ def populate() -> None:
 
     # Populating Comments
     for i in range(nb_of_comments):
-        comments_query = f"INSERT INTO Comments (comment_id, buyer_id, item_id, content, rating) VALUES ('{comment_ids[i]}', '{buyers_user_ids[i]}', '{item_ids[i]}', '{comments_content[i]}', {comments_ratings[i]});"
+        comments_query = f"INSERT INTO Comments (comment_id, buyer_id, item_id, content) VALUES ('{comment_ids[i]}', '{buyers_user_ids[i]}', '{item_ids[i]}', '{comments_content[i]}');"
         client.query_none(comments_query)
 
     # Populating Transactions

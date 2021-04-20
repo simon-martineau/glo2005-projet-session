@@ -49,7 +49,6 @@ CREATE TABLE IF NOT EXISTS Comments
     buyer_id   char(36) NOT NULL,
     item_id    char(36) NOT NULL,
     content    TEXT NOT NULL,
-    rating     integer(1) NOT NULL,
     created    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (buyer_id) REFERENCES Buyers (user_id),
     FOREIGN KEY (item_id) REFERENCES Items (item_id),
