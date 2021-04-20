@@ -6,15 +6,22 @@
 			<h3>{{ item.name }}</h3>
 			<div>Sold by: {{ item.seller_name }}</div>
 			<div>
-					<span class="badge bg-primary text-light">{{ item.category }}</span>
+				<span class="badge bg-primary text-light">{{ item.category }}</span>
 			</div>
 			<div>
 				<span class="price-tag">{{ item.price }} $</span>
-				<span class="quantity">Available: {{ item.quantity }}</span>
+				{% if not item.quantity %}
+					<span class="text-danger">out of stock</span>
+				{% else %}
+
+					<span class="quantity">Available: {{ item.quantity }}</span>
+				{% endif %}
 			</div>
 			<p>{{ item.description }}</p>
 		</div>
-		<a class="btn btn-primary" href="{{ url_for('buy_item', item_id=item.item_id) }}">Buy this item</a>
+		{% if item.quantity %}
+			<a class="btn btn-primary" href="{{ url_for('buy_item', item_id=item.item_id) }}">Buy this item</a>
+		{% endif %}
 	</div>
 	<div style="height: 40px"></div>
 
