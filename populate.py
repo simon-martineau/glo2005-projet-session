@@ -58,7 +58,7 @@ def populate() -> None:
     items_descriptions = [" ".join(["A beautiful", x, "that fits all your needs!"]) for x in items_names]
     items_prices = [round(random.uniform(15.0, 65.0), 2) for _ in range(nb_of_items)]
     items_quantity = [random.randint(5, 20) for _ in range(nb_of_items)]
-    items_categories_ids = [x for x in range(nb_of_items)]
+    items_categories_ids = [1 for _ in range(nb_of_items)]
 
     # Comments
     nb_of_comments = 100
