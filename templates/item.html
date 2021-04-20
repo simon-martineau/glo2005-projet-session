@@ -6,9 +6,7 @@
 			<h3>{{ item.name }}</h3>
 			<div>Sold by: {{ item.seller_name }}</div>
 			<div>
-				{% for tag in item.tags %}
-					<span class="badge bg-secondary text-light">{{ tag }}</span>
-				{% endfor %}
+					<span class="badge bg-primary text-light">{{ item.category }}</span>
 			</div>
 			<div>
 				<span class="price-tag">{{ item.price }} $</span>

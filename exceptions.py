@@ -10,3 +10,6 @@ class EmailTakenException(Exception):
 
 class SellerNameTaken(Exception):
     pass
+
+class NotFoundException(Exception):
+    pass

@@ -15,41 +15,6 @@ user_manager = UserManager(db)
 session_manager = SessionManager()
 app.wsgi_app = AuthenticationMiddleware(app.wsgi_app, db, session_manager)
 
-fake_items = [
-    {
-        "id": '1092384750928734',
-        "name": "item1",
-        "description": "item1 description asdf asdf asdf asdf asdf ",
-        "price": 3.99,
-        "tags": ["Very noice", "Hekkin chonker"],
-        "quantity": 4,
-        "seller_name": "bob marley",
-        "comments": [
-            {
-                "username": "simon",
-                "content": "very noice item that is",
-                "timestamp": "2020-04-05"
-            },
-            {
-                "username": "alex",
-                "content": "dis is a very nice nice",
-                "timestamp": "2020-04-06"
-            }
-        ]
-    },
-    {
-        "id": '10923843453456456',
-        "name": "item2",
-        "description": "item2 description qwer qwer qwer qwer qwer ",
-        "price": 113.99,
-        "tags": ["Quite noice", "Mega chonker"],
-        "quantity": 6,
-        "seller_name": "bober",
-        "comments": []
-    }
-]
-
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -162,7 +127,7 @@ def item(item_id):
 
 @app.route('/items/<item_id>/buy', methods=['GET', 'POST'])
 def buy_item(item_id):
-    requested_item = next(x for x in fake_items if x['id'] == item_id)
+    requested_item = None
     return render_template('buy_item.html', item=requested_item)
 
 

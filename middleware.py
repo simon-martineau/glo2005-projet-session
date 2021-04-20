@@ -15,5 +15,7 @@ class AuthenticationMiddleware:
             user_id = self.session_manager.get_user_id(session_id)
             user = self.db.get_user_by_id(user_id)
             environ['user'] = user
+        else:
+            environ['user'] = None
 
         return self.app(environ, start_response)

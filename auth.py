@@ -24,7 +24,7 @@ class UserManager:
             raise SellerNameTaken()
 
         hashed = self._hash_password(password)
-        return self.db.create_seller(email, hashed, None, name, description)
+        return self.db.create_seller(email, hashed, name, description)
 
     def create_buyer(self, email, password, first_name, last_name, username, birth_date):
         if self.db.is_email_taken(email):
@@ -35,7 +35,7 @@ class UserManager:
 
         hashed = self._hash_password(password)
         birth_date = date.fromisoformat(birth_date)
-        return self.db.create_buyer(email, hashed, None, first_name, last_name, username, birth_date)
+        return self.db.create_buyer(email, hashed, first_name, last_name, username, birth_date)
 
     def verify_user_credentials(self, email, password) -> Union[str, None]:
         user = self.db.get_user_by_email(email)

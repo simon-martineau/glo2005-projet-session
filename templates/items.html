@@ -6,7 +6,8 @@
 	<div class="flex-between" style="margin-bottom: 16px">
 		<h2>Items available</h2>
 		<form class="d-flex" action="" method="GET">
-			<input class="form-control" type="search" placeholder="Search by name" name="search" value="{{ request.args.get('search') }}">
+			<input class="form-control" type="search" placeholder="Search by name" name="search"
+			       value="{{ request.args.get('search') }}">
 			<button class="btn btn-outline-primary" type="submit">Search</button>
 		</form>
 	</div>
@@ -16,9 +17,9 @@
 				<div class="card-body">
 					<a href="{{ url_for('item', item_id=item.item_id) }}"><h3>{{ item.name }}</h3></a>
 					<div>
-						{% for tag in item.tags %}
-							<span class="badge bg-secondary text-light">{{ tag.tag }}</span>
-						{% endfor %}
+
+						<span class="badge bg-primary text-light">{{ item.category}}</span>
+
 					</div>
 					<div>
 						<span class="price-tag">{{ item.price }} $</span>

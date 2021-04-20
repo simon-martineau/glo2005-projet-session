@@ -11,15 +11,14 @@ class ApplicationDatabase:
                                   current_app.config['MYSQL_PASSWORD'],
                                   current_app.config['MYSQL_DATABASE'])
 
-    def __create_user(self, user_id: str, email_address: str, password: str, picture_url: str) -> None:
+    def __create_user(self, user_id: str, email_address: str, password: str) -> None:
         """
         Creates a new user in the database
         :param email_address: The user's e-mail address
         :param password: The user's password
-        :param picture_url: The user's picture's URL
         :return: None
         """
-        sql_query = f"INSERT INTO Users (user_id, email, password, picture_url) VALUES ('{user_id}', '{email_address}', '{password}', '{picture_url}');"
+        sql_query = f"INSERT INTO Users (user_id, email, password) VALUES ('{user_id}', '{email_address}', '{password}');"
         self.client.query_none(sql_query)
 
     def is_buyer_username_taken(self, username: str) -> bool:
@@ -46,13 +45,12 @@ class ApplicationDatabase:
         user_query = f"DELETE FROM Users U WHERE U.user_id='{user_id}';"
         self.client.query_none(user_query)
 
-    def create_buyer(self, email_address: str, password: str, picture_url: str, first_name: str, last_name: str,
+    def create_buyer(self, email_address: str, password: str, first_name: str, last_name: str,
                      username: str, birth_date: date) -> None:
         """
         Creates a new buyer in the database
         :param email_address: The buyer's e-mail address
         :param password: The buyer's password
-        :param picture_url: The buyer's picture's URL
         :param first_name: The buyer's first name
         :param last_name: The buyer's last name
         :param username: The buyer's chosen username
@@ -61,23 +59,22 @@ class ApplicationDatabase:
         """
         user_id = str(uuid.uuid4())
         formatted_date = birth_date.strftime("%Y-%m-%d")
-        self.__create_user(user_id, email_address, password, picture_url)
+        self.__create_user(user_id, email_address, password)
         buyer_query = f"INSERT INTO Buyers (user_id, first_name, last_name, username, birth_date) VALUES ('{user_id}', '{first_name}', '{last_name}', '{username}', '{formatted_date}');"
         self.client.query_none(buyer_query)
 
-    def create_seller(self, email_address: str, password: str, picture_url: str, name: str,
+    def create_seller(self, email_address: str, password: str, name: str,
                       description: str) -> None:
         """
         Creates a new seller in the database
         :param email_address: The seller's e-mail address
         :param password: The seller's password
-        :param picture_url: The seller's picture's URL
         :param name: The seller's name
         :param description: The seller's description
         :return: None
         """
         user_id = str(uuid.uuid4())
-        self.__create_user(user_id, email_address, password, picture_url)
+        self.__create_user(user_id, email_address, password)
         seller_query = f"INSERT INTO Sellers (user_id, name, description) VALUES ('{user_id}', '{name}', '{description}');"
         self.client.query_none(seller_query)
 
@@ -152,7 +149,12 @@ class ApplicationDatabase:
         :param item_id: The item_i dof the item to fetch
         :return: dict: The information about the item
         """
-        item_query = f"SELECT I.*, S.name AS seller_name FROM Sellers S, Items I WHERE I.item_id='{item_id}';"
+        item_query = f"""
+        SELECT I.*, S.name AS seller_name, C.name as category FROM Sellers S
+            INNER JOIN Items I on I.seller_id = s.user_id
+            INNER JOIN categories C on I.category_id = C.category_id WHERE I.item_id='{item_id}';
+            
+        """
         return self.client.query_one(item_query)
 
     def get_items(self, name: str = None) -> tuple:
@@ -163,12 +165,8 @@ class ApplicationDatabase:
         """
         if not name:
             name = ""
-        items_query = f"SELECT I.* FROM Items I WHERE I.name LIKE '%{name}%'"
+        items_query = f"SELECT I.*, c.name as category FROM Items I Left JOIN categories c on I.category_id = c.category_id WHERE I.name LIKE '%{name}%'"
         items_result = self.client.query_all(items_query)
-        for item in items_result:
-            tags_query = f"SELECT * FROM items_tags t WHERE t.item_id = '{item['item_id']}'"
-            tags_result = self.client.query_all(tags_query)
-            item['tags'] = tags_result
         return items_result
 
     def get_items_by_seller_id(self, seller_id):
@@ -176,7 +174,7 @@ class ApplicationDatabase:
         return self.client.query_all(query)
 
     def get_item_by_id_and_seller_id(self, item_id, seller_id):
-        query = f"SELECT i.*, c.name FROM items i LEFT JOIN categories c on i.category_id = c.category_id WHERE item_id = '{item_id}' AND seller_id = '{seller_id}'"
+        query = f"SELECT i.*, c.name as category FROM items i LEFT JOIN categories c on i.category_id = c.category_id WHERE item_id = '{item_id}' AND seller_id = '{seller_id}'"
         return self.client.query_one(query)
 
     def update_item(self, item_id, name, description, price, quantity, category_id):
