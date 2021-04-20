@@ -191,5 +191,54 @@ def workshop():
     return render_template('seller_workshop.html', items=seller_items)
 
 
+@app.route('/workshop/create', methods=['GET', 'POST'])
+def item_create():
+    errors = []
+    if not request.environ['user']:
+        return redirect('/login?next=/workshop')
+    user = request.environ['user']
+    if user['type'] != 'seller':
+        abort(403)
+    seller_id = user['user_id']
+    if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        price = request.form['price']
+        quantity = request.form['quantity']
+        category_id = request.form['category']
+        try:
+            db.create_item(name, description, price, quantity, category_id, seller_id)
+            return redirect('/workshop')
+        except Exception as e:
+            errors.append(str(e))
+            raise e
+    return render_template('seller_item_create.html', item=request.form, errors=errors, categories=db.get_categories())
+
+
+@app.route('/workshop/<item_id>', methods=['GET', 'POST'])
+def item_edit(item_id):
+    if not request.environ['user']:
+        return redirect('/login?next=/workshop')
+    user = request.environ['user']
+    if user['type'] != 'seller':
+        abort(403)
+    seller_id = user['user_id']
+    req_item = db.get_item_by_id_and_seller_id(item_id, seller_id)
+    if not item:
+        abort(404)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        price = request.form['price']
+        quantity = request.form['quantity']
+        category_id = request.form['category']
+        db.update_item(item_id, name, description, price, quantity, category_id)
+        return redirect('/workshop')
+    categories = db.get_categories()
+    return render_template('seller_item_edit.html', item=req_item, categories=categories)
+
+
+
 if __name__ == '__main__':
     app.run()
