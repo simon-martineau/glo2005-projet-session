@@ -1,5 +1,5 @@
 from conf import BasicConfig
-from flask import Flask, render_template, request, make_response, redirect
+from flask import Flask, render_template, request, make_response, redirect, abort
 from database.persistence import ApplicationDatabase
 from sessions import SessionManager
 from auth import UserManager
@@ -169,13 +169,26 @@ def buy_item(item_id):
 @app.route('/account')
 def account():
     if not request.environ['user']:
-        return 401
+        return redirect('/login?next=/account')
     else:
         user = request.environ['user']
         if user['type'] == 'seller':
-            return render_template('seller_account.html', seller=user)
+            transactions = db.get_transactions_by_seller_id(user['user_id'])
+            return render_template('seller_account.html', seller=user, transactions=transactions)
         else:
-            return render_template('buyer_account.html', buyer=user)
+            transactions = db.get_transactions_by_buyer_id(user['user_id'])
+            return render_template('buyer_account.html', buyer=user, transactions=transactions)
+
+
+@app.route('/workshop')
+def workshop():
+    if not request.environ['user']:
+        return redirect('/login?next=/workshop')
+    user = request.environ['user']
+    if user['type'] != 'seller':
+        abort(403)
+    seller_items = db.get_items_by_seller_id(user['user_id'])
+    return render_template('seller_workshop.html', items=seller_items)
 
 
 if __name__ == '__main__':

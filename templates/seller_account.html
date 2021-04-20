@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block body %}
+
+	<h2 class="mt-4">Account info</h2>
+
+	<div class="info-wrapper mt-4">
+		<p><b>Account type:</b> SELLER</p>
+		<p><b>Name:</b> {{ seller.name }}</p>
+		<p><b>Description:</b> {{ seller.description }}</p>
+		<p><b>Account creation date:</b> {{ seller.created }}</p>
+	</div>
+
+	<h2>Recent sales</h2>
+	{% if transactions %}
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Item</th>
+				<th scope="col">Buyer</th>
+				<th scope="col">Amount</th>
+				<th scope="col">Price</th>
+				<th scope="col">Timestamp</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for transaction in transactions %}
+				<tr>
+					<th scope="row">{{ loop.index }}</th>
+					<td><a href="{{ url_for('item', item_id=transaction.item_id) }}">{{ transaction.item_name }}</a></td>
+					<td>{{ transaction.buyer_username }}</td>
+					<td>{{ transaction.quantity }}</td>
+					<td>{{ transaction.price }}</td>
+					<td>{{ transaction.timestamp }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		No transactions found
+	{% endif %}
+
+
+{% endblock %}

@@ -96,7 +96,7 @@ class ApplicationDatabase:
         :param user_id: The user_id of the buyer
         :return: dict: The buyer's information in the database
         """
-        buyer_query = f"SELECT U.*, B.first_name, B.last_name, B.birth_date FROM Users U, Buyers B WHERE U.user_id=B.user_id AND B.user_id='{user_id}';"
+        buyer_query = f"SELECT U.*, B.first_name, B.last_name, B.birth_date, B.username FROM Users U, Buyers B WHERE U.user_id=B.user_id AND B.user_id='{user_id}';"
         return self.client.query_one(buyer_query)
 
     def get_seller_by_seller_name(self, seller_name: str) -> dict:
@@ -178,6 +178,10 @@ class ApplicationDatabase:
             item['tags'] = tags_result
         return items_result
 
+    def get_items_by_seller_id(self, seller_id):
+        query = f"SELECT i.*, c.name as category FROM items i LEFT JOIN categories c on i.category_id = c.category_id WHERE seller_id = '{seller_id}'"
+        return self.client.query_all(query)
+
     def get_user_by_id(self, user_id) -> dict:
         """
         Fetched a user by its user_id
@@ -233,3 +237,21 @@ class ApplicationDatabase:
         comment_id = str(uuid.uuid4())
         comment_query = f"INSERT INTO Comments (comment_id, buyer_id, item_id, content, rating) VALUES ('{comment_id}', '{buyer_id}', '{item_id}', '{comment_content}', {rating});"
         self.client.query_none(comment_query)
+
+    def get_transactions_by_buyer_id(self, buyer_id):  # TODO refact performance lol
+        query = f"""SELECT t.*, s.name as seller_name, i.name as item_name
+        FROM transactions t 
+            INNER JOIN sellers s on t.seller_id = s.user_id
+            INNER JOIN items i on t.item_id = i.item_id
+        WHERE t.buyer_id = '{buyer_id}'
+        """
+        return self.client.query_all(query)
+
+    def get_transactions_by_seller_id(self, seller_id):  # TODO refact performance lol
+        query = f"""SELECT t.*, b.username as buyer_username, i.name as item_name
+        FROM transactions t 
+            INNER JOIN buyers b on t.buyer_id = b.user_id
+            INNER JOIN items i on t.item_id = i.item_id
+        WHERE t.seller_id = '{seller_id}'
+        """
+        return self.client.query_all(query)

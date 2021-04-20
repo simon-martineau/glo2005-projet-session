@@ -27,8 +27,9 @@ CREATE TABLE IF NOT EXISTS Sellers
 );
 CREATE TABLE IF NOT EXISTS Categories
 (
-    category_name varchar(100),
-    PRIMARY KEY (category_name)
+    category_id integer AUTO_INCREMENT,
+    name varchar(100),
+    PRIMARY KEY (category_id)
 );
 CREATE TABLE IF NOT EXISTS Items
 (
@@ -37,9 +38,9 @@ CREATE TABLE IF NOT EXISTS Items
     description TEXT,
     price       FLOAT(2),
     quantity    integer,
-    category    varchar(100),
+    category_id integer NOT NULL,
     seller_id   char(36),
-    FOREIGN KEY (category) REFERENCES Categories (category_name),
+    FOREIGN KEY (category_id) REFERENCES Categories (category_id),
     FOREIGN KEY (seller_id) REFERENCES Sellers (user_id),
     PRIMARY KEY (item_id)
 );
