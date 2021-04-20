@@ -1,63 +1,55 @@
 CREATE TABLE IF NOT EXISTS Users
 (
-    user_id     char(36),
-    email       varchar(100) UNIQUE,
-    password    TEXT,
+    user_id     char(36) NOT NULL,
+    email       varchar(100) UNIQUE NOT NULL,
+    password    TEXT NOT NULL,
     created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    picture_url TEXT,
     PRIMARY KEY (user_id)
 );
 CREATE TABLE IF NOT EXISTS Buyers
 (
-    user_id    char(36),
-    first_name varchar(100),
-    last_name  varchar(100),
-    username   varchar(100) UNIQUE,
-    birth_date DATE,
+    user_id    char(36) NOT NULL,
+    first_name varchar(100) NOT NULL,
+    last_name  varchar(100) NOT NULL,
+    username   varchar(100) UNIQUE NOT NULL,
+    birth_date DATE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users (user_id),
     PRIMARY KEY (user_id)
 );
 CREATE TABLE IF NOT EXISTS Sellers
 (
-    user_id     char(36),
-    name        varchar(100),
-    description TEXT,
+    user_id     char(36) NOT NULL,
+    name        varchar(100) NOT NULL,
+    description TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users (user_id),
     PRIMARY KEY (user_id)
 );
 CREATE TABLE IF NOT EXISTS Categories
 (
     category_id integer AUTO_INCREMENT,
-    name varchar(100),
+    name varchar(100) NOT NULL,
     PRIMARY KEY (category_id)
 );
 CREATE TABLE IF NOT EXISTS Items
 (
-    item_id     char(36),
-    name        varchar(100),
-    description TEXT,
-    price       FLOAT(2),
-    quantity    integer,
+    item_id     char(36) NOT NULL,
+    name        varchar(100) NOT NULL,
+    description TEXT NOT NULL,
+    price       FLOAT(2) NOT NULL,
+    quantity    integer NOT NULL,
     category_id integer NOT NULL,
-    seller_id   char(36),
+    seller_id   char(36) NOT NULL,
     FOREIGN KEY (category_id) REFERENCES Categories (category_id),
     FOREIGN KEY (seller_id) REFERENCES Sellers (user_id),
     PRIMARY KEY (item_id)
 );
-CREATE TABLE IF NOT EXISTS Items_tags
-(
-    item_id char(36),
-    tag     varchar(100),
-    FOREIGN KEY (item_id) REFERENCES Items (item_id),
-    PRIMARY KEY (item_id, tag)
-);
 CREATE TABLE IF NOT EXISTS Comments
 (
-    comment_id char(36),
-    buyer_id   char(36),
-    item_id    char(36),
-    content    TEXT,
-    rating     integer(1),
+    comment_id char(36) NOT NULL,
+    buyer_id   char(36) NOT NULL,
+    item_id    char(36) NOT NULL,
+    content    TEXT NOT NULL,
+    rating     integer(1) NOT NULL,
     created    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (buyer_id) REFERENCES Buyers (user_id),
     FOREIGN KEY (item_id) REFERENCES Items (item_id),
@@ -65,12 +57,12 @@ CREATE TABLE IF NOT EXISTS Comments
 );
 CREATE TABLE IF NOT EXISTS Transactions
 (
-    transaction_id char(36),
-    buyer_id       char(36),
-    seller_id      char(36),
-    item_id        char(36),
-    price          FLOAT(2),
-    quantity       integer,
+    transaction_id char(36) NOT NULL,
+    buyer_id       char(36) NOT NULL,
+    seller_id      char(36) NOT NULL,
+    item_id        char(36) NOT NULL,
+    price          FLOAT(2) NOT NULL,
+    quantity       integer NOT NULL,
     timestamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (buyer_id) REFERENCES Buyers (user_id),
     FOREIGN KEY (seller_id) REFERENCES Sellers (user_id),
