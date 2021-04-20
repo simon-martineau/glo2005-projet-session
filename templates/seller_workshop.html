@@ -2,29 +2,30 @@
 {% block body %}
 	<h2 class="my-4">Current listings</h2>
 	<table class="table">
-			<thead>
+		<thead>
+		<tr>
+			<th scope="col">#</th>
+			<th scope="col">Name</th>
+			<th scope="col">Description</th>
+			<th scope="col">Price</th>
+			<th scope="col">Quantity</th>
+			<th scope="col">Category</th>
+			<th scope=""></th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for item in items %}
 			<tr>
-				<th scope="col">#</th>
-				<th scope="col">Name</th>
-				<th scope="col">Description</th>
-				<th scope="col">Price</th>
-				<th scope="col">Quantity</th>
-				<th scope="col">Category</th>
-				<th scope=""></th>
+				<th scope="row">{{ loop.index }}</th>
+				<td><a href="{{ url_for('item', item_id=item.item_id) }}">{{ item.name }}</a></td>
+				<td>{{ item.description }}</td>
+				<td>{{ item.price }} $</td>
+				<td>{{ item.quantity }}</td>
+				<td>{{ item.category }}</td>
+				<td><a href="{{ url_for('item_edit', item_id=item.item_id) }}">Edit</a></td>
 			</tr>
-			</thead>
-			<tbody>
-			{% for item in items %}
-				<tr>
-					<th scope="row">{{ loop.index }}</th>
-					<td><a href="{{ url_for('item', item_id=item.item_id) }}">{{ item.name }}</a></td>
-					<td>{{ item.description }}</td>
-					<td>{{ item.price }} $</td>
-					<td>{{ item.quantity }}</td>
-					<td>{{ item.category }}</td>
-				<td><a href="#">Edit</a></td>
-				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
+		{% endfor %}
+		</tbody>
+	</table>
+	<a href="{{ url_for('item_create') }}" class="btn btn-primary mt-4">Create a new item</a>
 {% endblock %}

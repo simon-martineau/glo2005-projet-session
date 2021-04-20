@@ -137,20 +137,13 @@ class ApplicationDatabase:
         self.client.query_none(seller_query)
         self.__delete_user_by_user_id(user_id)
 
-    def create_item(self, item_name: str, item_description: str, price: float, quantity: int, category: str,
+    def create_item(self, item_name: str, item_description: str, price: float, quantity: int, category_id: int,
                     seller_id: str) -> None:
-        """
-        Creates an item for sale in the database
-        :param item_name: The name of the item
-        :param item_description: The description of the item
-        :param price: The price of the item
-        :param quantity: The quantity of the item available
-        :param category: The category of the item
-        :param seller_id: The user_id of the seller
-        :return: None
-        """
         item_id = str(uuid.uuid4())
-        item_query = f"INSERT INTO Items VALUES ('{item_id}', '{item_name}', '{item_description}', {price}, {quantity}, '{category}', '{seller_id}');"
+        item_query = f"""
+        INSERT INTO items (item_id, name, description, price, quantity, category_id, seller_id)
+            VALUES ('{item_id}', '{item_name}', '{item_description}', {price}, {quantity}, {category_id}, '{seller_id}');
+        """
         self.client.query_none(item_query)
 
     def get_item_by_id(self, item_id: str) -> dict:
@@ -180,6 +173,26 @@ class ApplicationDatabase:
 
     def get_items_by_seller_id(self, seller_id):
         query = f"SELECT i.*, c.name as category FROM items i LEFT JOIN categories c on i.category_id = c.category_id WHERE seller_id = '{seller_id}'"
+        return self.client.query_all(query)
+
+    def get_item_by_id_and_seller_id(self, item_id, seller_id):
+        query = f"SELECT i.*, c.name FROM items i LEFT JOIN categories c on i.category_id = c.category_id WHERE item_id = '{item_id}' AND seller_id = '{seller_id}'"
+        return self.client.query_one(query)
+
+    def update_item(self, item_id, name, description, price, quantity, category_id):
+        query = f"""
+        UPDATE items SET 
+            name = '{name}',
+            description = '{description}',
+            price = '{price}',
+            quantity = '{quantity}',
+            category_id = {category_id}
+        WHERE item_id = '{item_id}';
+        """
+        self.client.query_none(query)
+
+    def get_categories(self):
+        query = "SELECT * FROM categories"
         return self.client.query_all(query)
 
     def get_user_by_id(self, user_id) -> dict:

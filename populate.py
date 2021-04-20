@@ -62,7 +62,8 @@ def populate() -> None:
 
     # Comments
     nb_of_comments = 100
-    adverbs = ["Really", "Not really", "Very", "Not very", "Immensely", "Not immensely", "Intensely", "Not intensely", "Humongously", "Not humongously"]
+    adverbs = ["Really", "Not really", "Very", "Not very", "Immensely", "Not immensely", "Intensely", "Not intensely",
+               "Humongously", "Not humongously"]
     adjectives = ["good", "bad", "convenient", "useful", "futile", "useless", "lovely", "cool", "nice", "awesome"]
     comment_ids = [str(uuid.uuid4()) for _ in range(nb_of_comments)]
     comments_content = [" ".join(x) for x in list(itertools.product(adverbs, adjectives))]
@@ -90,7 +91,7 @@ def populate() -> None:
 
     # Populating Sellers
     for i in range(nb_of_sellers):
-        sellers_query = f"INSERT INTO Sellers (user_id, name, description) VALUES ('{users_ids[i+100]}', '{sellers_names[i]}', '{sellers_descriptions[i]}');"
+        sellers_query = f"INSERT INTO Sellers (user_id, name, description) VALUES ('{users_ids[i + 100]}', '{sellers_names[i]}', '{sellers_descriptions[i]}');"
         client.query_none(sellers_query)
 
     # Populating Items
@@ -108,4 +109,5 @@ def populate() -> None:
         transactions_query = f"INSERT INTO Transactions (transaction_id, buyer_id, seller_id, item_id, price, quantity) VALUES ('{transaction_ids[i]}', '{buyers_user_ids[i]}', '{sellers_user_ids[i]}', '{item_ids[i]}', {items_prices[i]}, {transactions_quantities[i]});"
         client.query_none(transactions_query)
 
-populate()
+if __name__ == '__main__':
+    populate()

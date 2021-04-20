@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block body %}
+	<form method="post">
+		<div class="mb-3">
+			<label for="name" class="form-label">Name</label>
+			<input type="text" class="form-control" id="name" name="name" value="{{ item.name }}" required>
+		</div>
+		<div class="mb-3">
+			<label for="description" class="form-label">Description</label>
+			<textarea class="form-control" id="description" name="description" required>{{ item.description }}</textarea>
+		</div>
+		<div class="mb-3">
+			<label for="price" class="form-label">Price</label>
+			<input type="number" class="form-control" id="price" name="price" value="{{ item.price }}" required step=".01">
+		</div>
+		<div class="mb-3">
+			<label for="quantity" class="form-label">Quantity</label>
+			<input type="number" class="form-control" id="quantity" name="quantity" value="{{ item.quantity }}" required step="1">
+		</div>
+		<div class="mb-3">
+			<label for="category" class="form-label">Category</label>
+			<select id="category" name="category" class="form-control" required>
+				{% for category in categories %}
+					<option value="{{ category.category_id }}" {% if category.category_id == item.category_id %}selected{% endif %}>{{ category.name }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		{% if errors %}
+			<ul>
+				{% for error in errors %}
+					<li class="text-danger">{{ error }}</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+
+{% endblock body %}
