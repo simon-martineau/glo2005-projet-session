@@ -1,7 +1,9 @@
 from flask import current_app
 from .mysql import MysqlClient
+from pymysql.err import MySQLError
 import uuid
 from datetime import date
+from exceptions import InvalidQuantity
 
 
 class ApplicationDatabase:
@@ -249,20 +251,33 @@ class ApplicationDatabase:
         comment_query = f"INSERT INTO Comments (comment_id, buyer_id, item_id, content, rating) VALUES ('{comment_id}', '{buyer_id}', '{item_id}', '{comment_content}', {rating});"
         self.client.query_none(comment_query)
 
-    def get_transactions_by_buyer_id(self, buyer_id):  # TODO refact performance lol
+    def get_transactions_by_buyer_id(self, buyer_id):
         query = f"""SELECT t.*, s.name as seller_name, i.name as item_name
         FROM transactions t 
             INNER JOIN sellers s on t.seller_id = s.user_id
             INNER JOIN items i on t.item_id = i.item_id
         WHERE t.buyer_id = '{buyer_id}'
+        ORDER BY t.timestamp DESC
         """
         return self.client.query_all(query)
 
-    def get_transactions_by_seller_id(self, seller_id):  # TODO refact performance lol
+    def get_transactions_by_seller_id(self, seller_id):
         query = f"""SELECT t.*, b.username as buyer_username, i.name as item_name
         FROM transactions t 
             INNER JOIN buyers b on t.buyer_id = b.user_id
             INNER JOIN items i on t.item_id = i.item_id
         WHERE t.seller_id = '{seller_id}'
+        ORDER BY t.timestamp DESC
         """
         return self.client.query_all(query)
+
+    def create_transaction(self, buyer_id, seller_id, item_id, price, quantity):
+        transaction_id = uuid.uuid4()
+        query = f"""
+        INSERT INTO transactions (transaction_id, buyer_id, seller_id, item_id, price, quantity)
+        VALUES ('{transaction_id}', '{buyer_id}', '{seller_id}', '{item_id}', {price}, {quantity})
+        """
+        try:
+            self.client.query_none(query)
+        except MySQLError:
+            raise InvalidQuantity

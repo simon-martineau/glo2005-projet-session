@@ -4,7 +4,7 @@ from database.persistence import ApplicationDatabase
 from sessions import SessionManager
 from auth import UserManager
 from middleware import AuthenticationMiddleware
-from exceptions import UsernameTakenException, EmailTakenException, SellerNameTaken
+from exceptions import UsernameTakenException, EmailTakenException, SellerNameTaken, InvalidQuantity
 
 app = Flask(__name__)
 app.config.from_object(BasicConfig)
@@ -14,6 +14,7 @@ with app.app_context():
 user_manager = UserManager(db)
 session_manager = SessionManager()
 app.wsgi_app = AuthenticationMiddleware(app.wsgi_app, db, session_manager)
+
 
 @app.route('/')
 def home():
@@ -127,8 +128,27 @@ def item(item_id):
 
 @app.route('/items/<item_id>/buy', methods=['GET', 'POST'])
 def buy_item(item_id):
-    requested_item = None
-    return render_template('buy_item.html', item=requested_item)
+    user = request.environ['user']
+    amount = 1
+    if not user:
+        abort(403)
+    if user['type'] != 'buyer':
+        abort(403)
+    errors = []
+    requested_item = db.get_item_by_id(item_id)
+    if request.method == 'POST':
+        amount = request.form['amount']
+        if int(amount) < 1:
+            errors.append("You have to buy one or more items")
+        else:
+            try:
+                db.create_transaction(user['user_id'], requested_item['seller_id'], requested_item['item_id'],
+                                      requested_item['price'] * int(amount), int(amount))
+                return redirect('/account')
+            except InvalidQuantity:
+                errors.append("You cannot purchase the specified amount")
+
+    return render_template('buy_item.html', item=requested_item, amount=amount, errors=errors)
 
 
 @app.route('/account')
@@ -202,7 +222,6 @@ def item_edit(item_id):
         return redirect('/workshop')
     categories = db.get_categories()
     return render_template('seller_item_edit.html', item=req_item, categories=categories)
-
 
 
 if __name__ == '__main__':

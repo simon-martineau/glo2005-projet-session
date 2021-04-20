@@ -1,4 +1,30 @@
 {% extends 'base.html' %}
 {% block body %}
-	buy item page
+	<div class="mt-4"></div>
+	<h2 class="my-4">Buy an item</h2>
+	<div class="card">
+		<div class="card-body">
+			<p><b>Item name:</b> {{ item.name }}</p>
+			<p><b>Item price:</b> {{ item.price }}</p>
+			<p><b>Item seller:</b> {{ item.seller_name }}</p>
+			<p><b>Amount available:</b> {{ item.quantity }}</p>
+			<form method="post">
+				<div class="mb-3">
+					<label for="amount">Amount:</label>
+					<input type="number" step="1" name="amount" value="{{ amount }}" id="amount" class="form-control" required>
+				</div>
+				<div class="mb-3">
+					<button type="submit" class="btn btn-primary">Confirm</button>
+				</div>
+				{% if errors %}
+					<ul>
+						{% for error in errors %}
+							<li>{{ error }}</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</form>
+
+		</div>
+	</div>
 {% endblock %}
