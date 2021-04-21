@@ -256,7 +256,7 @@ class ApplicationDatabase:
         :return: None
         """
         comment_id = str(uuid.uuid4())
-        comment_query = f"INSERT INTO Comments (comment_id, buyer_id, item_id, content, rating) VALUES ('{comment_id}', '{buyer_id}', '{item_id}', '{comment_content}', {rating});"
+        comment_query = f"INSERT INTO Comments (comment_id, buyer_id, item_id, content) VALUES ('{comment_id}', '{buyer_id}', '{item_id}', '{comment_content}');"
         self.client.query_none(comment_query)
 
     def get_transactions_by_buyer_id(self, buyer_id):
